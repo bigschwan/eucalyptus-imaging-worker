@@ -19,23 +19,24 @@
 # additional information or have any questions.
 
 #
-# Simple script to install the servo service without using a package manager
+# Simple script to install the servo worker without using a package manager
 
 # Install python code
 python setup.py install
 
 # Setup servo user
-useradd -s /sbin/nologin -d /var/lib/eucalyptus-imaging-service -M imaging-service
-install -v -m 0440 scripts/service-sudo.conf /etc/sudoers.d/imaging-service
+useradd -s /sbin/nologin -d /var/lib/eucalyptus-imaging-worker -M imaging-worker
+install -v -m 0440 scripts/worker-sudo.conf /etc/sudoers.d/imaging-worker
 
-# Setup needed for servo service
-install -v -m 755 scripts/imaging-service-init /etc/init.d/eucalyptus-imaging-service
-sed -i 's/LOGLEVEL=info/LOGLEVEL=debug/' /etc/init.d/eucalyptus-imaging-service
-# Use set gid for imaging-service owned directories
-install -v -m 6700 -o imaging-service -g imaging-service -d /var/{run,lib,log}/eucalyptus-imaging-service
-chown imaging-service:imaging-service -R /etc/eucalyptus-imaging-service
-chmod 700 /etc/eucalyptus-imaging-service
+# Setup needed for servo worker
+install -v -m 755 scripts/imaging-worker-init /etc/init.d/eucalyptus-imaging-worker
+sed -i 's/LOGLEVEL=info/LOGLEVEL=debug/' /etc/init.d/eucalyptus-imaging-worker
+# Use set gid for imaging-worker owned directories
+mkdir /var/{run,lib,log}/eucalyptus-imaging-worker
+install -v -m 6700 -o imaging-worker -g imaging-worker -d /var/{run,lib,log}/eucalyptus-imaging-worker
+chown imaging-worker:imaging-worker -R /etc/eucalyptus-imaging-worker
+chmod 700 /etc/eucalyptus-imaging-worker
 
 # NTP cronjob
-install -p -m 755 -D scripts/service-ntp-update /usr/libexec/eucalyptus-imaging-service/service-ntp-update
-install -p -m 0750 -D scripts/imaging-service.cron /etc/cron.d/imaging-service
+install -p -m 755 -D scripts/worker-ntp-update /usr/libexec/eucalyptus-imaging-worker/worker-ntp-update
+install -p -m 0750 -D scripts/imaging-worker.cron /etc/cron.d/imaging-worker

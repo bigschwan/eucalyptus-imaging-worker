@@ -21,7 +21,7 @@ import config
 import service
 from service.ws import EucaISConnection
 
-class ServiceLoop(object):
+class WorkerLoop(object):
     STOPPED = "stopped"
     STOPPING = "stopping"
     RUNNING = "running"
@@ -33,12 +33,12 @@ class ServiceLoop(object):
         if self.__instance_id is None:
             self.__instance_id = config.get_service_id()
 
-        self.__status = ServiceLoop.STOPPED
+        self.__status = WorkerLoop.STOPPED
         service.log.debug('main loop running with clc_host=%s, instance_id=%s' % (self.__euca_host, self.__instance_id))
 
     def start(self):
-        self.__status = ServiceLoop.RUNNING 
-        while self.__status == ServiceLoop.RUNNING:
+        self.__status = WorkerLoop.RUNNING 
+        while self.__status == WorkerLoop.RUNNING:
             service.log.info('Querying for new imaging task')
             try:
                 con = EucaISConnection(host_name=service.config.get_clc_host(), aws_access_key_id=config.get_access_key_id(),
@@ -58,15 +58,15 @@ class ServiceLoop(object):
                 service.log.error('Failed to query the imaging service: %s' % err)
 
             start_time = time.time()
-            while time.time() - start_time < config.QUERY_PERIOD_SEC and self.__status == ServiceLoop.RUNNING:
+            while time.time() - start_time < config.QUERY_PERIOD_SEC and self.__status == WorkerLoop.RUNNING:
                 service.log.debug('sleeping')
                 time.sleep(10)
 
         service.log.info('Exiting')
-        self.__status = ServiceLoop.STOPPED
+        self.__status = WorkerLoop.STOPPED
 
     def stop(self):
-        self.__status = ServiceLoop.STOPPING
+        self.__status = WorkerLoop.STOPPING
 
     def status(self):
         return self.__status
