@@ -32,7 +32,7 @@ install -v -m 0440 scripts/worker-sudo.conf /etc/sudoers.d/imaging-worker
 install -v -m 755 scripts/imaging-worker-init /etc/init.d/eucalyptus-imaging-worker
 sed -i 's/LOGLEVEL=info/LOGLEVEL=debug/' /etc/init.d/eucalyptus-imaging-worker
 # Use set gid for imaging-worker owned directories
-mkdir /var/{run,lib,log}/eucalyptus-imaging-worker
+mkdir -p /var/{run,lib,log}/eucalyptus-imaging-worker
 install -v -m 6700 -o imaging-worker -g imaging-worker -d /var/{run,lib,log}/eucalyptus-imaging-worker
 chown imaging-worker:imaging-worker -R /etc/eucalyptus-imaging-worker
 chmod 700 /etc/eucalyptus-imaging-worker
