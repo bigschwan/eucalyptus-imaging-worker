@@ -26,6 +26,7 @@ from worker.main_loop import WorkerLoop
 import worker.config as config
 import worker
 import subprocess
+import sys
 
 __version__ = '1.0.0-dev'
 Version = __version__

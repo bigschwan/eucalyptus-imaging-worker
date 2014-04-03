@@ -30,6 +30,7 @@ from worker.ws import EucaEC2Connection
 from worker.ws import EucaISConnection
 import worker.ssl
 
+
 class ImagingTask(object):
     FAILED_STATE  = 'FAILED'
     DONE_STATE  = 'DONE'
@@ -226,8 +227,13 @@ class VolumeImagingTask(ImagingTask):
         self.manifest_url = manifest_url
         self.ec2_conn = worker.ws.connect_ec2(host_name=config.get_clc_host(), aws_access_key_id=config.get_access_key_id(), aws_secret_access_key=config.get_secret_access_key(), security_token=config.get_security_token())
         self.volume = None
+        self.volume_id = volume_id
         if volume_id:
             self.volume = self.ec2_conn.conn.get_all_volumes([self.volume.id])
+        if not self.volume:
+            raise ValueError('Request for volume:"{0}" retuned:"{1}"'
+                             .format(volume_id, str(self.volume)))
+        self.volume = self.volume[0]
         self.volume_attached_dev = None
 
     def __repr__(self):
