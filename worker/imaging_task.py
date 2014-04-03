@@ -369,8 +369,8 @@ class VolumeImagingTask(ImagingTask):
         worker.log.debug('detaching volume {0}'.format(self.volume.id))
         devices_before = self.get_block_devices()
         self.volume.update()
-        # Do not attempt to detach a volume which is not attached or
-        # attaching, or is not attached to this instance
+        # Do not attempt to detach a volume which is not attached/attaching, or
+        # is not attached to this instance
         this_instance_id = config.get_worker_id()
         attached_state = self.volume.attachment_state()
         if not attached_state \
@@ -396,6 +396,7 @@ class VolumeImagingTask(ImagingTask):
                     break
                 else:
                     time.sleep(2)
+                elapsed = time.time() - start
             if self.volume_attached_dev in devices_after:
                 # todo: add specific error?
                 self.volume.update()
