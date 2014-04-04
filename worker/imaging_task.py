@@ -228,8 +228,8 @@ class VolumeImagingTask(ImagingTask):
         self.ec2_conn = worker.ws.connect_ec2(host_name=config.get_clc_host(), aws_access_key_id=config.get_access_key_id(), aws_secret_access_key=config.get_secret_access_key(), security_token=config.get_security_token())
         self.volume = None
         self.volume_id = volume_id
-        if volume_id:
-            self.volume = self.ec2_conn.conn.get_all_volumes([self.volume.id])
+        if self.volume_id:
+            self.volume = self.ec2_conn.conn.get_all_volumes([self.volume_id])
         if not self.volume:
             raise ValueError('Request for volume:"{0}" retuned:"{1}"'
                              .format(volume_id, str(self.volume)))
@@ -308,7 +308,9 @@ class VolumeImagingTask(ImagingTask):
                     else:
                         new_device_name = dev
                         break
-            time.sleep(2)
+            elapsed = time.time() - start
+            if elapsed < local_dev_timeout:
+                time.sleep(2)
         if not new_device_name:
             raise RuntimeError('Could find local device for volume:"{0}"'
                                .format(self.volume.id))
